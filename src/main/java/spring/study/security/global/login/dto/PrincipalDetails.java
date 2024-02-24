@@ -1,11 +1,11 @@
-package spring.study.security.dto.auth;
+package spring.study.security.global.login.dto;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import spring.study.security.model.User;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import spring.study.security.domain.model.User;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 // 시큐리티가 /login주소 요청이 오면 낚아채서 로그인을 진행시킴.
 // 로그인 진행이 완료가 되면, 시큐리티 session(일반적인 세션 X)을 만들어줍니다. (key: Security ContextHolder)
@@ -15,11 +15,17 @@ import java.util.Collection;
 
 // Security Session => Authentication => UserDetails
 
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails extends DefaultOAuth2User implements UserDetails {
 
-    private User user;
+    private final User user;
 
     public PrincipalDetails(User user) {
+        super(null, new HashMap<>(){{put("id", null);}}, "id");
+        this.user = user;
+    }
+
+    public PrincipalDetails(User user, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey) {
+        super(authorities, attributes, nameAttributeKey);
         this.user = user;
     }
 
@@ -27,7 +33,7 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collect = new ArrayList<>();
-        collect.add((GrantedAuthority) () -> user.getRole());
+        collect.add((GrantedAuthority) user::getRole);
         return collect;
     }
 
@@ -38,7 +44,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getPassword();
+        return user.getUsername();
     }
 
     @Override

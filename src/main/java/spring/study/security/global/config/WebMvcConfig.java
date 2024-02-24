@@ -1,4 +1,4 @@
-package spring.study.security.config;
+package spring.study.security.global.config;
 
 import org.springframework.boot.web.servlet.view.MustacheViewResolver;
 import org.springframework.context.annotation.Configuration;

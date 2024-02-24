@@ -1,4 +1,4 @@
-package spring.study.security.model;
+package spring.study.security.domain.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Timestamp;
 
@@ -22,6 +23,7 @@ public class User {
     private String role;
     private String provider;
     private String providerId;
+    private String refreshToken;
     @CreationTimestamp
     private Timestamp createDate;
 
@@ -35,5 +37,15 @@ public class User {
         this.providerId = providerId;
     }
 
+    public void authorizeUser() {
+        this.role = "ROLE_USER";
+    }
 
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.refreshToken = updateRefreshToken;
+    }
+
+    public void passwordEncode(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.password = bCryptPasswordEncoder.encode(this.password);
+    }
 }
