@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class JwtService implements InitializingBean {
+public class JwtService {
 
     private final UserRepository userRepository;
     @Getter
@@ -53,8 +54,8 @@ public class JwtService implements InitializingBean {
         this.refreshTokenExpiration = refreshTokenExpiration * 1000;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @PostConstruct
+    public void init() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
