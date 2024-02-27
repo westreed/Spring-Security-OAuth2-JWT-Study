@@ -22,7 +22,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private static final String NO_CHECK_URL = "/login";
-    private static final String NO_CHECK_OAUTH_URL = "/login/oauth2/code";
 
     public JwtAuthenticationProcessingFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
@@ -32,7 +31,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("JwtAuthenticationProcessingFilter() 호출 : {}", request.getRequestURI());
-        if (request.getRequestURI().equals(NO_CHECK_URL)){ // || request.getRequestURI().startsWith(NO_CHECK_OAUTH_URL)
+        if (request.getRequestURI().equals(NO_CHECK_URL)){
             log.info("URL PASS");
             filterChain.doFilter(request, response);
             return;
@@ -92,6 +91,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             .roles(user.getRole().replace("ROLE_", ""))
             .build();
 
+        // UsernamePasswordAuthenticationToken 객체를 생성할 때
+        // User의 Authorities를 함께 제공하면, 인증된 사용자 객체로 생성된다.
         Authentication authentication = new UsernamePasswordAuthenticationToken(
             userDetailsUser,
             null,
