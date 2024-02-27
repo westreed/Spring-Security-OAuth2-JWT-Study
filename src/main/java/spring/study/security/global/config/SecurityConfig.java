@@ -69,11 +69,7 @@ public class SecurityConfig {
                 .successHandler(oAuth2LoginSuccessHandler)
                 .failureHandler(oAuth2LoginFailureHandler)
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-//                .defaultSuccessUrl("/")
         );
-        // 원래 스프링 시큐리티 필터 순서가 LogoutFilter 이후에 로그인 필터 동작
-        // 따라서, LogoutFilter 이후에 우리가 만든 필터 동작하도록 설정
-        // 그 이유는 JWT로 인증이 되었다면, Security 내부의 인가과정을 직접 처리하기 위해서임.
         // 순서 : LogoutFilter -> JwtAuthenticationProcessingFilter -> CustomJsonUsernamePasswordAuthenticationFilter
         http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
         http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
